@@ -25,64 +25,55 @@ https://leetcode-cn.com/problems/ju-zhen-zhong-de-lu-jing-lcof/
 注意：本题与主站 79 题相同：https://leetcode-cn.com/problems/word-search/
 
 ```
-
-//别人的代码未看未改
-/*
- * @lc app=leetcode id=79 lang=javascript
- *
- * [79] Word Search
- */
-function DFS(board, row, col, rows, cols, word, cur) {
-  // 边界检查
-  if (row >= rows || row < 0) return false;
-  if (col >= cols || col < 0) return false;
-
-  const item = board[row][col];
-
-  if (item !== word[cur]) return false;
-
-  if (cur + 1 === word.length) return true;
-
-  // If use HashMap keep track visited letters, then need manual clear HashMap for each backtrack which needs extra space.
-  // here we use a little trick
-  board[row][col] = null;
-
-  // UP, DOWN, LEFT, RIGHT
-  const res =
-    DFS(board, row + 1, col, rows, cols, word, cur + 1) ||
-    DFS(board, row - 1, col, rows, cols, word, cur + 1) ||
-    DFS(board, row, col - 1, rows, cols, word, cur + 1) ||
-    DFS(board, row, col + 1, rows, cols, word, cur + 1);
-
-  board[row][col] = item;
-
-  return res;
-}
 /**
  * @param {character[][]} board
  * @param {string} word
  * @return {boolean}
  */
 var exist = function(board, word) {
-  if (word.length === 0) return true;
-  if (board.length === 0) return false;
-
-  const rows = board.length;
-  const cols = board[0].length;
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      const hit = DFS(board, i, j, rows, cols, word, 0);
-      if (hit) return true;
+    if(word.length == 0) return true;
+    if(board.length == 0 ) return false;
+    var rows = board.length;
+    var cols = board[0].length;
+    //var res = false;
+    //var wordLen = word.length;
+    //从任意格可出发
+    for(let i = 0; i<rows; i++){
+        for(let j=0; j<cols; j++){
+        var res0 = dfs(board,word,rows,cols,i,j,0);
+        if(res0) {return true;}
+        }
     }
-  }
-  return false;
+    return false;//不能用提前var res =false;然后return res。因为res会变！
 };
+var dfs = function(board,word,rows,cols,row,col,i){
+    if(row >= rows || row < 0){return false;}
+    if(col >= cols || col < 0){return false;}
+   // if(i >= word.length ){return false;}//??zaijiancha
+
+    if(word[i] == board[row][col]){
+        var tmp =  board[row][col];
+        board[row][col]=null;
+        // var res = true;
+        if(i+1 == word.length){return true;}
+        if(i+1 < word.length){
+            var res = dfs(board,word,rows,cols,row-1,col,i+1) 
+            || dfs(board,word,rows,cols,row+1,col,i+1)
+            || dfs(board,word,rows,cols,row,col-1,i+1) 
+            || dfs(board,word,rows,cols,row,col+1,i+1) ;
+            }
+        board[row][col]=tmp;//从任意格出发，所以需要多次遍历！所以要恢复
+        return res;
+    }
+return false;//不能用提前var res =false;然后return res。因为res会变！只有第一次循环进，才初始化，其他循环都是沿用之前的。
+}
+
 ```
 
 
 
 ##总结BFS（广度优先）和DFS（深度优先搜索）
+参考：https://blog.csdn.net/qq_41681241/article/details/81432634
 
 DFS是一条链一条链的搜索，而BFS是逐层进行搜索，这是他俩一个很大的区别
 
